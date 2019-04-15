@@ -97,13 +97,18 @@ line.y{
   fill:rgb(30,30,30);
   opacity:0.5;
 }
+.imgline{
+  stroke:red;
+  stroke-width: 7.8px;
+  z-index: 30;
+}
   </style>
   <body>
     
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script>
 //canvas
-var margin={top:75, right:15, bottom:125, left:85},
+var margin={top:75, right:35, bottom:125, left:15},
   width=1200-margin.left,
   height=2500-margin.top-margin.bottom;
 var svg1=d3.select("#chart").append("svg")
@@ -145,7 +150,7 @@ d3.json('connections_by_station_name.json').then(function(d) {
 
 d3.json('stations_by_name.json').then (function(data){
   stationsraw=data;
-  console.log(stationsraw);
+  // console.log(stationsraw);
   var data=d3.keys(data)
       .map(function(d){
         return {"STATION":d,"LINE_NO":data[d].LINE_NO,"LAT":data[d].LAT,"LNG":data[d].LNG,"SERIAL_NO":data[d].SERIAL_NO,
@@ -389,6 +394,7 @@ function  Drawstationimg(stationline){
   var imgshadowL1;  var imgshadowL3;  var imgshadowL5;  
   var imgshadowL2;  var imgshadowL4;   var imgshadowL6;   
   var Row;
+
   var images= imgsvg.selectAll("body")
    .data(stationline)
    .enter().append("svg:image")
@@ -484,13 +490,24 @@ function  Drawstationimg(stationline){
                     .attr('height', 270)
                     .attr("xlink:href","/pic/"+d.img)
                     .style("pointer-events", "none");
+
+                var  imgbigtext = imgsvg.append("text")
+                          .attr('id',"StationImgText")
+                          .attr('x', 700)
+                          .attr('y', 700)
+                          .text( "Line"+d.LINENO+"\n"+d.STATION)
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",20)
+                          .style("fill","white")
+                    .style("pointer-events", "none");
                 
                     })
                     .on("mouseout",imgmouseout)
   function imgmouseout(){
     imgsvg.select("#StationImg").remove();
     imgsvg.select("#StationImgbig").remove();
-    // imgsvg.select("#ImgShadow").remove();
+    imgsvg.select("#StationImgText").remove();
     imgsvg.select("#shadow1").remove();
     imgsvg.select("#shadow2").remove();
     imgsvg.select("#shadowL1").remove();
@@ -500,8 +517,33 @@ function  Drawstationimg(stationline){
     imgsvg.select("#shadowL5").remove();
     imgsvg.select("#shadowL6").remove();
     // d3.select(this).style("opacity",0)
-  }
-   
+  };
+
+  //Railway Line
+  var imgline= imgsvg.selectAll("body")
+                       .data(stationline)
+                       .enter().append("line")
+                       .attr("x1",function(d){return ((d.INDEX%41)*35+30);})
+                       .attr("y1",function(d){return (ImageRank(d.INDEX)*70+50);})
+                       .attr("x2",function(d){return ((d.INDEX%41)*35+65);})
+                       .attr("y2",function(d){return (ImageRank(d.INDEX)*70+50);})
+                       .attr("id",function(d){return d.ST_NAME_EN;})
+                      //  .attr("class","imgline")
+                       .attr("stroke",function(d){return linecolor(d.LINENO);})
+                       .attr("stroke-width",2)
+                       .attr("stroke-linecap", "round");
+  imgsvg.selectAll("body")
+     .data(stationline)
+       .enter().append("text")
+      .text(function(d){return d.STATION;})
+      .attr("x",function(d){return ((d.INDEX%41)*35+40);})
+      .attr("y",function(d){return (ImageRank(d.INDEX)*70+57);})
+      // .attr("transform", "translate(0,-20)")
+      // .attr("transform",function(d){return "rotate(90)"})
+      .attr("text-anchor", "middle")
+      .style("font-family", "Avenir")
+      .style("font-size",5)
+      .style("fill","white");
 };
 
 function Drawgeocanvas(stationline){
