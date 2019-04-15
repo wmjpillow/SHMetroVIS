@@ -171,7 +171,7 @@ d3.json('stations_by_name.json').then (function(data){
   Drawstationline(stationline)
   Drawgeocanvas(stationline)
   Drawstationimg(stationline)
-      
+  // Drawstationgeo(stationline)   
   //entry data
   d3.json('every5minute_entry0401_list.json').then (function(data){ 
        data=d3.keys(data)
@@ -206,18 +206,6 @@ d3.json('stations_by_name.json').then (function(data){
 
 });
 });
-
-function geoxscale(d){
-    return d3.scaleLinear()
-             .domain([d3.min(d,function(d){return +d.LNG}),d3.max(d,function(d){return +d.LNG})])
-             .range([0,geocanvas.width]);
-   };
-function geoyscale(d){
-    return d3.scaleLinear()
-             .domain([d3.min(d,function(d){return +d.LAT}),d3.max(d,function(d){return +d.LAT})])
-             .range([geocanvas.height,0]);
-   };
-
 
 // Variables for colors and legend:
 var mint = "#05B89A",
@@ -491,22 +479,95 @@ function  Drawstationimg(stationline){
                     .attr("xlink:href","/pic/"+d.img)
                     .style("pointer-events", "none");
 
-                var  imgbigtext = imgsvg.append("text")
+                var  imgbigtext = imgsvg.append("svg:text")
                           .attr('id',"StationImgText")
-                          .attr('x', 700)
-                          .attr('y', 700)
-                          .text( "Line"+d.LINENO+"\n"+d.STATION)
+                          .attr('x', 680)
+                          .attr('y', 720)
+                          .text( "Line Number:"+""+d.LINENO)
                           .attr("text-anchor", "front")
                           .style("font-family", "Avenir")
-                          .style("font-size",20)
+                          .style("font-size",14)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 680)
+                          .attr('dy', 20)
+                          .text("Station Name:" +d.STATION)
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",14)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 680)
+                          .attr('dy', 20)
+                          .text("Station Name:" + d.ST_NAME_EN)
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",14)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 680)
+                          .attr('dy', 20)
+                          .text("Station Latitude:" + d.LAT)
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",14)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 680)
+                          .attr('dy', 20)
+                          .text("Station Longitude:" + d.LNG)
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",14)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x',680)
+                          .attr('dy', 20)
+                          .text("Transfer Tag:" + d.TRANSFER_TAG)
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",14)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 680)
+                          .attr('dy', 20)
+                          .text("FIRST_T_TIME:" )
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",14)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 680)
+                          .attr('dy', 20)
+                          .text("LAST_T_TIME:" )
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",14)
                           .style("fill","white")
                     .style("pointer-events", "none");
-                
+            var  imgbigline = imgsvg.append("line")
+                          .attr('id',"StationImgbigline")
+                          .attr('x1', 680)
+                          .attr('y1', 680)
+                          .attr('x2', 780)
+                          .attr('y2', 680)
+                          .attr("stroke",linecolor(d.LINENO))
+                          .attr("stroke-width",5)
+                          .attr("stroke-linecap", "round");
+            var  imgbigcircle = imgsvg.append("circle")
+                          .attr('id',"StationImgbigcircle")
+                          .attr('r',7)
+                          .attr('cx', 730)
+                          .attr('cy', 680)
+                          .style("fill",linecolor(d.LINENO));
+               imgsvg.select("#geostationcircle").style("fill","white");
                     })
                     .on("mouseout",imgmouseout)
   function imgmouseout(){
     imgsvg.select("#StationImg").remove();
     imgsvg.select("#StationImgbig").remove();
+    imgsvg.select("#StationImgbigline").remove();
+    imgsvg.select("#StationImgbigcircle").remove();
     imgsvg.select("#StationImgText").remove();
     imgsvg.select("#shadow1").remove();
     imgsvg.select("#shadow2").remove();
@@ -544,7 +605,56 @@ function  Drawstationimg(stationline){
       .style("font-family", "Avenir")
       .style("font-size",5)
       .style("fill","white");
+
+//stationGeoMap
+function stationgeoxscale(d){
+    return d3.scaleLinear()
+             .domain([d3.min(d,function(d){return +d.LNG}),d3.max(d,function(d){return +d.LNG})])
+             .range([0,400]);
+   };
+   function stationgeoyscale(d){
+    return d3.scaleLinear()
+             .domain([d3.min(d,function(d){return +d.LAT}),d3.max(d,function(d){return +d.LAT})])
+             .range([400,0]);
+   };
+   stationgeox=stationgeoxscale(stationline);
+   stationgeoy=stationgeoyscale(stationline);
+           imgsvg.selectAll("body")
+                    .data(stationline)
+                    .enter().append("circle")
+                    .attr("id", "geostationcircle")
+                    .attr("r",1.5)
+                    .attr("cx",function(d){return stationgeox(+d.LNG)+1000})
+                    .attr("cy",function(d){return stationgeoy(+d.LAT)+570})
+                    .style("fill",function(d){return linecolor(d.LINENO)})
+          imgsvg.selectAll(".connection")
+                .data(connections)
+                .enter().append("line")
+                .attr("class","connection")
+                .attr("id","geostationline")
+                .attr("stroke",function(d){return linecolor(+d[2])})
+                .attr("stroke-width",1)
+                .attr("stroke-linecap", "round")
+                .attr("x1", function(d) { return stationgeox(+(stationsraw[d[0]].LNG))+1000; })
+                .attr("y1", function(d) { return stationgeoy(+(stationsraw[d[0]].LAT))+570; })
+                .attr("x2", function(d) { return stationgeox(+(stationsraw[d[1]].LNG))+1000; })
+                .attr("y2", function(d) { return stationgeoy(+(stationsraw[d[1]].LAT))+570; })
 };
+
+// function Drawstationgeo(stationline){
+
+// }
+
+function geoxscale(d){
+    return d3.scaleLinear()
+             .domain([d3.min(d,function(d){return +d.LNG}),d3.max(d,function(d){return +d.LNG})])
+             .range([0,geocanvas.width]);
+   };
+function geoyscale(d){
+    return d3.scaleLinear()
+             .domain([d3.min(d,function(d){return +d.LAT}),d3.max(d,function(d){return +d.LAT})])
+             .range([geocanvas.height,0]);
+   };
 
 function Drawgeocanvas(stationline){
   geox=geoxscale(stationline);
@@ -558,10 +668,6 @@ function Drawgeocanvas(stationline){
                     .attr("cx",function(d){return geox(+d.LNG)})
                     .attr("cy",function(d){return geoy(+d.LAT)})
                     .style("fill","white")
-                    // .style("fill","white")
-                    // .style("fill-opacity","0.3")
-                    // .style("stroke","white")
-                    // .style("stroke-opacity","0.3")
                     .on("mouseover",function(d){
                       console.log(d);
                       console.log(this);
