@@ -382,6 +382,121 @@ function  Drawstationimg(stationline){
   var imgshadowL1;  var imgshadowL3;  var imgshadowL5;  
   var imgshadowL2;  var imgshadowL4;   var imgshadowL6;   
   var Row;
+  function stationgeoxscale(d){
+    return d3.scaleLinear()
+             .domain([d3.min(d,function(d){return +d.LNG}),d3.max(d,function(d){return +d.LNG})])
+             .range([0,400]);
+   };
+   function stationgeoyscale(d){
+    return d3.scaleLinear()
+             .domain([d3.min(d,function(d){return +d.LAT}),d3.max(d,function(d){return +d.LAT})])
+             .range([400,0]);
+   };
+  var description= imgsvg.append("svg:text")
+                          .attr('id',"description")
+                          .attr('x', 30)
+                          .attr('y', 620)
+                          .text( "Data visualization plays an important role in urban data analysis that")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 30)
+                          .attr('dy', 20)
+                          .text("has a huge impact on urban design and research. In this project,")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 30)
+                          .attr('dy', 20)
+                          .text("Shanghai’s metro data is visualized and data on 2015/04/01 is chosen as an example.")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 30)
+                          .attr('dy', 20)
+                          .text("Our target is to present ShangHai’s city streaming based on metros’ streaming.")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 30)
+                          .attr('dy', 20)
+                          .text("And data is collected from ShangHai public transportation released from Shanghai government in 2015")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 30)
+                          .attr('dy', 20)
+                          .text("We mainly focus on metro streaming and passenger streaming in different stations")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 30)
+                          .attr('dy', 20)
+                          .text("along the timeline in a particular day. To provide more information for urban data analysis,")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 30)
+                          .attr('dy', 20)
+                          .text("weather information at different times is added. What’s more is that the spatial division")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 30)
+                          .attr('dy', 20)
+                          .text("is applied based on ShangHai administrative regions in order to reflect the relationship")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 30)
+                          .attr('dy', 20)
+                          .text("between metros’ moving and regions’ functionalities.")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 30)
+                          .attr('dy', 20)
+                          .text("This project aims to build a template for urban subway data visualization in China. ")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 30)
+                          .attr('dy', 20)
+                          .text("We hope that citizens will have an overall understanding of metro streaming and urban")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
+                          .append('svg:tspan')
+                          .attr('x', 30)
+                          .attr('dy', 20)
+                          .text("designers will get new insights from our product.")
+                          .attr("text-anchor", "front")
+                          .style("font-family", "Avenir")
+                          .style("font-size",10)
+                          .style("fill","white")
 
   var images= imgsvg.selectAll("body")
    .data(stationline)
@@ -396,7 +511,7 @@ function  Drawstationimg(stationline){
                     .attr("xlink:href", function(d){return ("/pic/"+d.img);})
                     .style("opacity",0.8)    
                     .on("mouseover",function(d){
-                      console.log(ImageRank(d.INDEX))
+                      console.log(d.LINENO)
                       console.log(d);
                       console.log(this);
                       imgRow=(d3.select(this).attr('row'));
@@ -560,8 +675,41 @@ function  Drawstationimg(stationline){
                           .attr('cx', 730)
                           .attr('cy', 680)
                           .style("fill",linecolor(d.LINENO));
-               imgsvg.select("#geostationcircle").style("fill","white");
+               imgsvg.selectAll(".geostationcircle").style("opacity",0.2);
+            var cover=imgsvg.append("rect")
+                    .attr("id","cover")
+                    .attr("x",1000)
+                    .attr("y",570)
+                    .attr("width",500)
+                    .attr("height",500)
+                    .style("fill","rgb(30,30,30)")
+                    .style("opacity",0.7)
+               var changeline= imgsvg.selectAll("body")
+                .data(connections)
+                .enter().append("line")
+                // .attr("class","stationconnect")
+                .attr("id","changestationline")
+                .attr("stroke",function(x,j){return linecolor(+x[2])})
+                .attr("stroke-width",2.5)
+                .attr("stroke-linecap", "round")
+                .attr("x1", function(x,j) { if(x[2]==d.LINENO)
+                {return stationgeox(+(stationsraw[x[0]].LNG))+1000; }})
+                .attr("y1", function(x,j) { if(x[2]==d.LINENO)
+                {return stationgeoy(+(stationsraw[x[0]].LAT))+570; }})
+                .attr("x2", function(x,j) { if(x[2]==d.LINENO)
+                {return stationgeox(+(stationsraw[x[1]].LNG))+1000; }})
+                .attr("y2", function(x,j) { if(x[2]==d.LINENO)
+                {return stationgeoy(+(stationsraw[x[1]].LAT))+570; }})
+            var changecircle=imgsvg.append("circle")
+                    .attr("id","changecircle")
+                    // .attr("class","geostationcircle")
+                    .attr("r",7)
+                    .attr("cx", stationgeox(+d.LNG)+1000)
+                    .attr("cy", stationgeoy(+d.LAT)+570)
+                    .style("fill", linecolor(d.LINENO))
                     })
+            
+                // imgsvg.selectAll(".stationconnect").style("opacity",0.4)
                     .on("mouseout",imgmouseout)
   function imgmouseout(){
     imgsvg.select("#StationImg").remove();
@@ -577,6 +725,12 @@ function  Drawstationimg(stationline){
     imgsvg.select("#shadowL4").remove();
     imgsvg.select("#shadowL5").remove();
     imgsvg.select("#shadowL6").remove();
+    imgsvg.selectAll(".geostationcircle").style("opacity",1);
+    imgsvg.select("#changecircle").remove();
+    imgsvg.select("#cover").remove();
+    imgsvg.selectAll("#changestationline").remove();
+    // imgsvg.selectAll(".stationconnect").style("opacity",1);
+    // imgsvg.select("#"+String(d.ST_NAME_EN)).attr("r",1.5);
     // d3.select(this).style("opacity",0)
   };
 
@@ -607,30 +761,24 @@ function  Drawstationimg(stationline){
       .style("fill","white");
 
 //stationGeoMap
-function stationgeoxscale(d){
-    return d3.scaleLinear()
-             .domain([d3.min(d,function(d){return +d.LNG}),d3.max(d,function(d){return +d.LNG})])
-             .range([0,400]);
-   };
-   function stationgeoyscale(d){
-    return d3.scaleLinear()
-             .domain([d3.min(d,function(d){return +d.LAT}),d3.max(d,function(d){return +d.LAT})])
-             .range([400,0]);
-   };
    stationgeox=stationgeoxscale(stationline);
    stationgeoy=stationgeoyscale(stationline);
            imgsvg.selectAll("body")
                     .data(stationline)
                     .enter().append("circle")
-                    .attr("id", "geostationcircle")
+                    .attr("id",function(d){return d.ST_NAME_EN;})
+                    .attr("class","geostationcircle")
                     .attr("r",1.5)
                     .attr("cx",function(d){return stationgeox(+d.LNG)+1000})
                     .attr("cy",function(d){return stationgeoy(+d.LAT)+570})
                     .style("fill",function(d){return linecolor(d.LINENO)})
+                    .style("opacity",1)
+                    .on("mouseover",function(d){console.log(d);
+                    console.log(this);})
           imgsvg.selectAll(".connection")
                 .data(connections)
                 .enter().append("line")
-                .attr("class","connection")
+                .attr("class","stationconnect")
                 .attr("id","geostationline")
                 .attr("stroke",function(d){return linecolor(+d[2])})
                 .attr("stroke-width",1)
@@ -639,6 +787,7 @@ function stationgeoxscale(d){
                 .attr("y1", function(d) { return stationgeoy(+(stationsraw[d[0]].LAT))+570; })
                 .attr("x2", function(d) { return stationgeox(+(stationsraw[d[1]].LNG))+1000; })
                 .attr("y2", function(d) { return stationgeoy(+(stationsraw[d[1]].LAT))+570; })
+                .style("opacity",1)
 };
 
 // function Drawstationgeo(stationline){
