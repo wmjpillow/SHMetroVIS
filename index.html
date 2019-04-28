@@ -178,11 +178,11 @@ var geopoint=null;
 
 
 //load data
-d3.json('connections_by_station_name.json').then(function(d) {
+d3.json('data/connections_by_station_name.json').then(function(d) {
     connections=d;
     // console.log(connections);
 
-d3.json('stations_by_name.json').then (function(data){
+d3.json('data/stations_by_name.json').then (function(data){
   stationsraw=data;
   // console.log(stationsraw);
   var data=d3.keys(data)
@@ -207,7 +207,7 @@ d3.json('stations_by_name.json').then (function(data){
   Drawgeocanvas(stationline)
  
   //entry data
-  d3.json('every5minute_entry0401_list.json').then (function(data){ 
+  d3.json('data/every5minute_entry0401_list.json').then (function(data){ 
        data=d3.keys(data)
           .map(function(d){
               return {"time":d,"stations":data[d]}
