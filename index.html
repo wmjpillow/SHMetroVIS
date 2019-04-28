@@ -630,7 +630,7 @@ function  Drawstationimg(stationline){
                     .attr('height', 45)
                     .attr("row",function(d){return ImageRank(d.INDEX);})
                     .attr("rowNo",function(d){return (d.INDEX%41);})
-                    .attr("xlink:href", function(d){return ("/pic/"+d.img);})
+                    .attr("xlink:href", function(d){return ("https://github.com/wmjpillow/SHMetroVIS/blob/master/pic/"+d.img);})
                     .style("opacity",0.8)    
                     .on("mouseover",function(d){
                       // console.log(d.LINENO)
