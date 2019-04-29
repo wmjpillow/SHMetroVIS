@@ -63,14 +63,16 @@ background-repeat: no-repeat;
         #time{
             position:absolute;
             right:80px;
-            top:120px;
+            top:80px;
             width:500px;
             font-size: 15px;
             font-weight: bold;
+            z-index: -100;
         }
         p{
             margin-top:40px;
-            margin-right:-30px;
+            margin-left:900px;
+            z-index: 100;
         }
         #timerSVG{
             position:absolute;
@@ -90,8 +92,8 @@ background-repeat: no-repeat;
                 </h>
 
     <div class="panel-body" >
-                     <svg id="time"></svg>
-                      <p id="time" style="color:white opacity=0.9">05:00</p>
+            <p id="time24h" style="color:white">05:00</p>
+                    
                         <svg id="geo"></svg>  
                      <svg id="LineButtonGroup"></svg> 
     </div>      

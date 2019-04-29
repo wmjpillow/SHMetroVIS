@@ -42,7 +42,7 @@ function run(i){
 			mapUpdate(lineID,Metro[i],time,stationsWithIndex);
 		});
 	} catch{}
-	d3.select("#time").node().innerHTML=minsToTime(i);
+	d3.select("#time24h").node().innerHTML=minsToTime(i);
 	SliderXAxis.value(i);
 	i=i+1;
 	if(i>1418){i=350}
