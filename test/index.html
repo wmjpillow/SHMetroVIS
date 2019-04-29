@@ -1,0 +1,496 @@
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<body>
+<div>
+<h1> SHMetro <button id="play-button">Pause</button> </h1>
+<svg id="geo"/>
+<svg id="geolarge"/>
+<svg id="passengerNo"/>
+<svg id="timerSVG"></svg>
+
+
+
+</div>
+
+</body>
+
+<style>
+
+
+</style>
+<script>
+
+
+</script>
+
+<script>
+/*
+
+Ref: https://bl.ocks.org/officeofjane/47d2b0bfeecfcb41d2212d06d095c763
+*/
+var timerSVG=d3.select("#timerSVG");
+timerSVG.width=1200;
+timerSVG.height=200;
+timerSVG.attr("width",timerSVG.width).attr("height",timerSVG.height);
+timerSVG.margin = ({top: 10, right: 40, bottom: 40, left: 40});
+var timerCanvas=timerSVG.append("svg").append("g").attr("id","timerCanvas");
+timerCanvas.width=timerSVG.width-timerSVG.margin.left-timerSVG.margin.right;
+timerCanvas.height=timerSVG.height-timerSVG.margin.top-timerSVG.margin.bottom;
+timerCanvas.attr("width",timerCanvas.width).attr("height",timerCanvas.height)
+           .attr("transform","translate("+timerSVG.margin.left+","+timerSVG.margin.top+")");
+// timerCanvas.append("rect")
+//     .attr("width", timerCanvas.width)
+//     .attr("height", timerCanvas.height)
+//     .attr("fill", "pink");
+
+//5:00am
+var currentTime=300;
+//22:18
+var targetTime=1338;
+
+timerCanvas.append("input");
+var sliderXscale=d3.scaleLinear()
+                   .domain([300,targetTime])
+                   .range([0,timerCanvas.width]);
+var sliderYscale=d3.scaleLinear()
+                   .domain([0,6])
+                   .range([timerCanvas.height,0]);
+
+/*
+Axis drawing
+*/
+var SliderXAxis = d3.axisBottom(sliderXscale);
+timerCanvas.append("g")
+                 .attr("transform", "translate(0," + timerCanvas.height+ ")")
+                 .call(SliderXAxis)
+                 .selectAll("line,path")
+                 .style("stroke","grey");
+var SliderYAxis = d3.axisLeft(sliderYscale).ticks(6);
+timerCanvas.append("g")
+                 .call(SliderYAxis)
+                 .selectAll("line,path")
+                 .style("stroke","grey");
+
+//TimerLine chart
+d3.json('trains.json').then(function(data) {
+    //draw basic line
+    var timerline= timerCanvas.selectAll(".timerline").data(data);
+    var oldx=sliderXscale(300);
+    var oldy=sliderYscale(0);
+    timerline.enter().append("line").attr("class","timerline")
+         .attr("x1",function(d,i){if (i==0){return oldx; }  else{return sliderXscale(+data[i-1][0][0])} } )
+         .attr("y1",function(d,i){if (i==0){return oldy; }  else{return sliderYscale(data[i-1].length);} })
+         .attr("x2",function(d){return sliderXscale(+d[0][0]);} )
+         .attr("y2",function(d){return sliderYscale(d.length);} )
+         .style("stroke","grey");
+
+    });
+
+
+</script>
+
+<script>
+//console.log(d3);
+/*
+canvas and margin setting
+*/
+var passengerNo=d3.select("#passengerNo");
+passengerNo.width=600;
+passengerNo.height=400;
+passengerNo.attr("width",passengerNo.width).attr("height",passengerNo.height);
+passengerNo.margin = ({top: 20, right: 20, bottom: 20, left: 40});
+
+var passengerNoCanvas=passengerNo.append("svg").append("g").attr("id","Barcanvas");
+passengerNoCanvas.width=passengerNo.width-passengerNo.margin.left-passengerNo.margin.right;
+passengerNoCanvas.height=passengerNo.height-passengerNo.margin.top-passengerNo.margin.bottom;
+passengerNoCanvas.attr("width", passengerNoCanvas.width)
+         .attr("height", passengerNoCanvas.height)
+         .attr("transform","translate("+passengerNo.margin.left+","+passengerNo.margin.top+")");
+//background
+// passengerNoCanvas.append("rect")
+//     .attr("width", passengerNoCanvas.width)
+//     .attr("height", passengerNoCanvas.height)
+//     .attr("fill", "pink");
+
+/*
+scale setting
+*/
+var MetroCscale=d3.scaleOrdinal()
+             .domain([0,10])
+             .range(d3.schemeCategory10);
+
+var MetroBarXscale=d3.scaleBand()
+             .domain(["闵行开发区", "文井路", "华宁路", "金平路", "东川路", "剑川路", "北桥", "颛桥", "银都路", "春申路", "莘庄"])
+             .range([0,passengerNoCanvas.width]);
+
+var MetroBarYscale=d3.scaleLinear()
+             .domain([0,1700])
+             .range([passengerNoCanvas.height, 0]);
+
+/*
+Axis drawing
+*/
+var MetroBarXAxis = d3.axisBottom(MetroBarXscale);
+passengerNoCanvas.append("g")
+                 .attr("transform", "translate(0," + passengerNoCanvas.height+ ")")
+                 .call(MetroBarXAxis)
+                 .selectAll("line,path")
+                 .style("stroke","grey");
+var MetroBarYAxis = d3.axisLeft(MetroBarYscale);
+passengerNoCanvas.append("g")
+                 .call(MetroBarYAxis)
+                 .selectAll("line,path")
+                 .style("stroke","grey");
+
+
+
+function barUpdate(d,time){
+    /*
+    Input data: Array(n), n denotes the # of metro on the line at this moment.
+    Element in Array(n): [nowTime, startTime, [[station i, station i+1], position] ,people#] 
+    */
+    var t = d3.transition().duration(time);
+    //Here, d[1] denotes the start time in second.
+    var bars= passengerNoCanvas.selectAll("rect")
+              .data(d,function(d){a=d[1]; return a});
+    //Exit and remove old elements
+    bars.exit().transition(t)
+        .attr("class","exit")
+        .attr("y",MetroBarYscale(0))
+        .attr("height",0)
+        .style('fill-opacity', 1e-6)
+        .remove();
+    //Enter new elements as needed
+    bars.enter().append("rect")
+                .attr("class","bar")
+                .attr("x",function(d){return barXPosition(d[2])} )
+                .attr("y",MetroBarYscale(0))
+                .attr("width",MetroBarXscale.bandwidth()/4)
+                .attr("height",0)
+        .transition(t)
+                .attr("y",function(d){return MetroBarYscale(d[3])})
+                .attr("height",function(d){a=MetroBarYscale(0)-MetroBarYscale(d[3]); return a;});
+
+    //Update old elements as needed
+    bars.transition(t).attr("class","update")
+        .attr("x",function(d){return barXPosition(d[2])})
+        .attr("y",function(d){return MetroBarYscale(d[3])})
+        .attr("height",function(d){a=MetroBarYscale(0)-MetroBarYscale(d[3]); return a;});
+
+}
+
+function barXPosition(d){
+    /*
+    Input d: [[station i, station i+1], position]
+           e.g. if at the middle of 2 stations, position=0.5
+    Output: the position on x axis on passengerNoCanvas.
+    */
+    
+    return MetroBarXscale(d[0][0]) + ( MetroBarXscale(d[0][1]) - MetroBarXscale(d[0][0]) ) * d[1]
+
+}
+
+
+
+</script>
+
+<script>
+//geocanvas setting
+var geo = d3.select("#geo");
+geo.width=500;
+geo.height=400;
+geo.attr("width",geo.width).attr("height",geo.height);
+geo.margin = ({top: 20, right: 0, bottom: 10, left: 40});
+
+var geocanvas=geo.append("svg").append("g");
+geocanvas.width=geo.width-geo.margin.left-geo.margin.right;
+geocanvas.height=geo.height-geo.margin.top-geo.margin.bottom;
+geocanvas.attr("width", geocanvas.width)
+         .attr("height", geocanvas.height)
+         .attr("transform","translate("+geo.margin.left+","+geo.margin.top+")");
+
+// var cscale=d3.scaleOrdinal()
+//              .domain([0,16])
+//              .range(d3.schemeCategory10)
+var yellow = "#FFC039",
+    orange = "#FF9339",
+    red = "#FF1907",
+    lawngreen="#7CFC00",
+    rebeccapurple="#663399",
+    mediumslateblue="#7b68ee",
+    orchid="#da70d6",
+    blue="#4169E1",
+    lightskyblue="#87cefa",
+    mediumpurple="#9370db",
+    saddlebrown="#8b4513",
+    green="#00FF00",
+    lightpink="#FFC0CB",
+    mediumaquamarine="#66DDAA";
+var color=[red,lawngreen,yellow,rebeccapurple,mediumslateblue,orchid,orange,blue,lightskyblue,mediumpurple,saddlebrown,green,lightpink];
+var cscale=d3.scaleOrdinal()
+             .domain([1,16])
+             .range(color);
+
+function geoxscale(d){
+    return d3.scaleLinear()
+             .domain([d3.min(d,function(d){return +d.LNG}),d3.max(d,function(d){return +d.LNG})])
+             .range([0,geocanvas.width]);
+}
+function geoyscale(d){
+    return d3.scaleLinear()
+             .domain([d3.min(d,function(d){return +d.LAT}),d3.max(d,function(d){return +d.LAT})])
+             .range([geocanvas.height,0]);
+}
+</script>
+
+<script>
+
+//geolargecanvas setting
+var geolarge = d3.select("#geolarge");
+geolarge.width=200;
+geolarge.height=400;
+geolarge.attr("width",geolarge.width).attr("height",geolarge.height);
+geolarge.margin = ({top: 20, right: 20, bottom: 10, left: 10});
+
+var geolargecanvas=geolarge.append("svg").append("g");
+geolargecanvas.width=geolarge.width-geolarge.margin.left-geolarge.margin.right;
+geolargecanvas.height=geolarge.height-geolarge.margin.top-geolarge.margin.bottom;
+geolargecanvas.attr("width", geolargecanvas.width)
+         .attr("height", geolargecanvas.height)
+         .attr("transform","translate("+geolarge.margin.left+","+geolarge.margin.top+")");
+
+function fivegeoxscale(d){
+    return d3.scaleLinear()
+             .domain([d3.min(d,function(d){return +d.LNG}),d3.max(d,function(d){return +d.LNG})])
+             .range([0,geolargecanvas.width]);
+}
+function fivegeoyscale(d){
+    return d3.scaleLinear()
+             .domain([d3.min(d,function(d){return +d.LAT}),d3.max(d,function(d){return +d.LAT})])
+             .range([geolargecanvas.height,0]);
+}
+
+
+</script>
+
+<script>
+
+d3.json('connections_by_station_name.json').then(function(d) {
+	connections=d;
+	d3.json('stations_by_name.json').then(function(d){
+		stations=d3.values(d);
+        stationsraw=d;
+		geox=geoxscale(stations);
+        geoy=geoyscale(stations);
+        geocanvas.selectAll(".GeoStationDot")
+                 .data(stations)
+                 .enter().append("circle")
+                 .attr("class","GeoStationDot")
+                 .attr("id", function(d){ return d.ST_NAME_EN; })
+                 .attr("r",1)
+                 .attr("cx",function(d){return geox(+d.LNG)})
+                 .attr("cy",function(d){return geoy(+d.LAT)})
+                 .style("fill",function(d){return cscale(d.LINE_NO)})
+                 .style("fill-opacity","0.5")
+                 .style("stroke",function(d){return cscale(d.LINE_NO)})
+                 .style("stroke-opacity","1")
+	
+
+        geocanvas.selectAll(".connection")
+             .data(connections)
+             .enter().append("line")
+             .attr("class","connection")
+             .attr("id",function(d){return d[0]+'-'+d[1]+"line"+d[2];})
+             .attr("stroke",function(d){return cscale(+d[2])})
+             .attr("stroke-linecap", "round")
+             .attr("x1", function(d) { return geox(+(stationsraw[d[0]].LNG)); })
+             .attr("y1", function(d) { return geoy(+(stationsraw[d[0]].LAT)); })
+             .attr("x2", function(d) { return geox(+(stationsraw[d[1]].LNG)); })
+             .attr("y2", function(d) { return geoy(+(stationsraw[d[1]].LAT)); });
+
+        d3.json('fiveLineConnections.json').then(function(d) {
+            fiveconnections=d;
+        d3.json('fiveLineNode.json').then(function(d){
+            fivestations=d3.values(d);
+            fivestationsraw=d;
+            fivegeox=fivegeoxscale(fivestations);
+            fivegeoy=fivegeoyscale(fivestations);
+            geolargecanvas.selectAll(".GeoStationDot")
+                     .data(fivestations)
+                     .enter().append("circle")
+                     .attr("class","GeoStationDot")
+                     .attr("id", function(d){ return d.ST_NAME_EN; })
+                     .attr("r",3)
+                     .attr("cx",function(d){return fivegeox(+d.LNG)})
+                     .attr("cy",function(d){return fivegeoy(+d.LAT)})
+                     .style("fill",function(d){return cscale(d.LINE_NO)})
+                     .style("fill-opacity","0.5")
+                     .style("stroke",function(d){return cscale(d.LINE_NO)})
+                     .style("stroke-opacity","1")
+        
+           console.log(fiveconnections);
+            geolargecanvas.selectAll(".connection")
+                 .data(fiveconnections)
+                 .enter().append("line")
+                 .attr("class","connection")
+                 .attr("id",function(d){console.log(d); return d[0]+'-'+d[1]+"line"+d[2];})
+                 .attr("stroke",function(d){return cscale(+d[2])})
+                 .attr("stroke-linecap", "round")
+                 .attr("x1", function(d) {console.log(d); return fivegeox(+(fivestationsraw[d[0]].LNG)); })
+                 .attr("y1", function(d) { return fivegeoy(+(fivestationsraw[d[0]].LAT)); })
+                 .attr("x2", function(d) { return fivegeox(+(fivestationsraw[d[1]].LNG)); })
+                 .attr("y2", function(d) { return fivegeoy(+(fivestationsraw[d[1]].LAT)); });
+
+
+
+
+
+            d3.json('trains.json').then(function(d) {
+                Metro=d;
+                var i=0;
+                var time=100
+
+                var playButton = d3.select("#play-button");
+                var moving = true;
+                playButton.on("click",function(){
+                                var button=d3.select(this);
+                                if(button.text()=="Pause"){
+                                    moving=false;
+                                    timestep.stop();
+                                    button.text("Play");
+                                }else{
+                                    moving=true;
+                                    timestep=d3.interval(function(){step()},100);
+                                    button.text("Pause");
+                                }
+                            });
+
+                function step(){
+                    
+                    barUpdate(Metro[i],time);
+                    mapUpdate(Metro[i],time);
+                    largemapUpdate(Metro[i],time);
+                    i=i+1;
+                    if(i>1338){i=0}}
+                
+                
+
+                var timestep=d3.interval(function(){step()},100);
+        
+            } );
+
+
+            metroCircleScale=d3.scaleLinear()
+                 .domain([0,1600])
+                 .range([0,10]);
+
+            function metroCircleX(d){
+                startStation=d[0][0];
+                endStation=d[0][1];
+                p=+d[1];
+                start=geox(+(stationsraw[startStation].LNG));
+                end=geox(+(stationsraw[endStation].LNG));
+                return start+p*(end-start);
+            }
+            function metroCircleY(d){
+                startStation=d[0][0];
+                endStation=d[0][1];
+                p=+d[1];
+                start=geoy(+(stationsraw[startStation].LAT));
+                end=geoy(+(stationsraw[endStation].LAT));
+                return start+p*(end-start);
+            }
+            function mapUpdate(d,time){
+                /*
+                Input data: Array(n), n denotes the # of metro on the line at this moment.
+                Element in Array(n): [nowTime, startTime, [[station i, station i+1], position] ,people#] 
+                */
+                var t = d3.transition().duration(time);
+                //Here, d[1] denotes the start time in second.
+                var circle= geocanvas.selectAll(".metrocircle")
+                          .data(d,function(d){a=d[1]; return a});
+                //Exit and remove old elements
+                circle.exit().transition(t)
+                    .attr("class","exit")
+                    .attr("r",0)
+                    .style('fill-opacity', 1e-6)
+                    .remove();
+                //Enter new elements as needed
+                circle.enter().append("circle")
+                            .attr("class","metroCircle")
+                            .attr("cx",function(d){return metroCircleX(d[2])} )
+                            .attr("cy",function(d){return metroCircleY(d[2])} )
+                            .attr("r",1)
+                    .transition(t)
+                            .attr("r",function(d){return metroCircleScale(d[3])});
+
+                //Update old elements as needed
+                circle.transition(t)
+                    .attr("cx",function(d){return metroCircleX(d[2])} )
+                    .attr("cy",function(d){return metroCircleY(d[2])} )
+                    .attr("r",function(d){return metroCircleScale(d[3])});
+
+            }
+
+
+
+            function fiveCircleX(d){
+                startStation=d[0][0];
+                endStation=d[0][1];
+                p=+d[1];
+                start=fivegeox(+(fivestationsraw[startStation].LNG));
+                end=fivegeox(+(fivestationsraw[endStation].LNG));
+                return start+p*(end-start);
+            }
+            function fiveCircleY(d){
+                startStation=d[0][0];
+                endStation=d[0][1];
+                p=+d[1];
+                start=fivegeoy(+(fivestationsraw[startStation].LAT));
+                end=fivegeoy(+(fivestationsraw[endStation].LAT));
+                return start+p*(end-start);
+            }
+
+            function largemapUpdate(d,time){
+                /*
+                Input data: Array(n), n denotes the # of metro on the line at this moment.
+                Element in Array(n): [nowTime, startTime, [[station i, station i+1], position] ,people#] 
+                */
+                var t = d3.transition().duration(time);
+                //Here, d[1] denotes the start time in second.
+                var circle= geolargecanvas.selectAll(".metrocircle")
+                          .data(d,function(d){a=d[1]; return a});
+                //Exit and remove old elements
+                circle.exit().transition(t)
+                    .attr("class","exit")
+                    .attr("r",0)
+                    .style('fill-opacity', 1e-6)
+                    .remove();
+                //Enter new elements as needed
+                circle.enter().append("circle")
+                            .attr("class","metroCircle")
+                            .attr("cx",function(d){return fiveCircleX(d[2])} )
+                            .attr("cy",function(d){return fiveCircleY(d[2])} )
+                            .attr("r",1)
+                    .transition(t)
+                            .attr("r",function(d){return 3*metroCircleScale(d[3])});
+
+                //Update old elements as needed
+                circle.transition(t)
+                    .attr("cx",function(d){return fiveCircleX(d[2])} )
+                    .attr("cy",function(d){return fiveCircleY(d[2])} )
+                    .attr("r",function(d){return 3*metroCircleScale(d[3])});
+
+            }
+        });});
+	});
+
+
+});
+
+
+</script>
+
+
+
+

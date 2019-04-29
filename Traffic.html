@@ -1,0 +1,139 @@
+<head>
+    <title>SH Metro</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/d3-simple-slider"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <style>
+      body {
+background:rgb(30,30,30);
+background-attachment: fixed;
+background-repeat: no-repeat;
+}
+        .panel-body {background:rgb(30,30,30);}
+        #brand{
+            position:fixed;
+            position:-webkit-sticky;
+            position:sticky;
+            font-size:20px;
+            top:12px;
+            left:-15px;
+            font-family:'Times New Roman';
+        }
+        #brand1{
+            position:fixed;
+            position:-webkit-sticky;
+            position:sticky;
+            font-size:15px;
+            top:15px;
+            left:-15px;
+            font-family:'Times New Roman';
+        }
+        #brand2{
+            position:fixed;
+            position:-webkit-sticky;
+            position:sticky;
+            font-size:15px;
+            top:35px;
+            left:-15px;
+            font-family:'Times New Roman';
+        }
+        #brand3{
+            position:fixed;
+            position:-webkit-sticky;
+            position:sticky;
+            font-size:15px;
+            top:55px;
+            left:-15px;
+            font-family:'Times New Roman';
+        }
+        #geo{
+            position:absolute;
+            left:80px;
+            top:20px;
+        }
+        #LineButtonGroup{
+            position:absolute;
+            right:150px;
+            top:100px;
+        }
+        #time{
+            position:absolute;
+            right:80px;
+            top:120px;
+            width:500px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+        p{
+            margin-top:40px;
+            margin-right:-30px;
+        }
+        #timerSVG{
+            position:absolute;
+            left:50px;
+            top:650px;
+        }
+    </style>
+</head>
+
+<body>
+    
+                <h id="brand"  >
+                    <div style="color:gold">SHMetro</div>
+                    <div id="brand1" style="color:grey" onclick="javascript:window.location='index.html'">TrafficFlow</div>
+                    <div id="brand2" style="color:grey" onclick="javascript:window.location='Entrance.html'">EntranceFlow</div>
+                    <div id="brand3" style="color:grey" onclick="javascript:window.location='Exit.html'">ExitFlow</div>
+                </h>
+
+    <div class="panel-body" >
+                     <svg id="time"></svg>
+                      <p id="time" style="color:white opacity=0.9">05:00</p>
+                        <svg id="geo"></svg>  
+                     <svg id="LineButtonGroup"></svg> 
+    </div>      
+            <div class="col-sm-12">
+                  <svg id="timerSVG"></svg>
+            </div>      
+    </div>
+</div>
+
+</body>
+<script src="./js/TimeSlider.js"></script>
+<script src="./js/Timer.js"></script>
+<script src="./js/Geolocation.js"></script>
+<script src="./js/LineButton.js"></script>
+<script src="./js/MetroFlow.js"></script>
+<script>
+    d3.select("#brand1")
+      .on("mouseover",function(d){
+          console.log(this)
+          d3.select(this).style("color","white")
+      })
+      .on("mouseout",function(d){
+          d3.select(this).style("color","grey")
+      })
+      d3.select("#brand2")
+      .on("mouseover",function(d){
+          console.log(this)
+          d3.select(this).style("color","white")
+      })
+      .on("mouseout",function(d){
+          d3.select(this).style("color","grey")
+      })
+      d3.select("#brand3")
+      .on("mouseover",function(d){
+          console.log(this)
+          d3.select(this).style("color","white")
+      })
+      .on("mouseout",function(d){
+          d3.select(this).style("color","grey")
+      })
+</script>
+
+
+
+

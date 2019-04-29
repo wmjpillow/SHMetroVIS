@@ -1,0 +1,36 @@
+% Extra Packages
+\usepackage{url}
+\usepackage{epstopdf}
+\usepackage{arydshln} % For \hdashline in tables
+\usepackage{enumitem} % For [noitemsep] in lists
+
+% Coloring author comments
+\usepackage{color}
+\usepackage[usenames,dvipsnames]{xcolor}
+\definecolor{Purple}{rgb}{.75,0,.85}
+
+\newif\ifnotes
+\notestrue
+\newcommand{\todo}[1]{\ifnotes {\textcolor{Purple}{\bf TODO: #1\ }} \fi}
+
+% if we want to put in page breaks to assess length
+\newif\iftestbreaks
+\testbreakstrue
+\newcommand{\testbreak}{\iftestbreaks\newpage\fi}
+
+% Useful abbreviations
+\usepackage{xspace}
+\newcommand{\etal}{\emph{et al.}\@\xspace}
+\newcommand{\ie}{\emph{i.e.}\xspace}
+\newcommand{\eg}{\emph{e.g.}\xspace}
+\newcommand{\etals}{\mbox{\emph{et~al.}'s }}
+
+% TODO NSF CRI / Gleicher commands
+\def\naive{na\"{\i}ve}
+\def\naively{na\"{\i}vely}
+
+% Droid Sans font
+%\usepackage[defaultsans]{droidsans}
+%\renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be typewriter style
+%\usepackage[T1]{fontenc}
+%\linespread{1.1}

@@ -1,0 +1,177 @@
+<DOCTYPE html>
+  <meta charset="utf-8">
+  <title>SH Metro</title>
+  <head>
+       <h id="brand"  >
+      <div style="color:gold">SHMetro</div>
+      <div id="brand1" style="color:grey" onclick="javascript:window.location='index.html'">TrafficFlow</div>
+      <div id="brand2" style="color:grey" onclick="javascript:window.location='Entrance.html'">EntranceFlow</div>
+      <div id="brand3" style="color:grey" onclick="javascript:window.location='Exit.html'">ExitFlow</div>
+     </h>
+        <div id = 'chart'>
+        <div class="fixed" id="fixed"> </div>
+      </div> 
+  </head>
+  <style>
+body {
+background:rgb(30,30,30);
+background-attachment: fixed;
+background-repeat: no-repeat;
+}
+#brand{
+            position:fixed;
+            position:-webkit-sticky;
+            position:sticky;
+            font-size:20px;
+            top:12px;
+            left:-15px;
+        }
+        #brand1{
+            position:fixed;
+            position:-webkit-sticky;
+            position:sticky;
+            font-size:15px;
+            top:15px;
+            left:-15px;
+        }
+        #brand2{
+            position:fixed;
+            position:-webkit-sticky;
+            position:sticky;
+            font-size:15px;
+            top:35px;
+            left:-15px;
+        }
+        #brand3{
+            position:fixed;
+            position:-webkit-sticky;
+            position:sticky;
+            font-size:15px;
+            top:55px;
+            left:-15px;
+        }
+
+#chart {
+width: 1200px;
+/* margin: 55px auto; */
+z-index: 10;
+}
+.fixed {
+  font-family: sans-serif;
+    /* background: rgb(30,30,30); */
+    bottom:450px;
+    /* top:50px; */
+    padding: 5px;;
+    width: 400px;
+    height:400px;
+    z-index: 100;
+    /* position: fixed; */
+}
+.fixed{
+  position:-webkit-sticky;
+  position:sticky;
+  top:0;
+}
+svg {
+background: none;
+}
+.axis path {
+  fill: none;
+}
+.axis line {
+stroke: #FCFCFC;
+}
+div.tooltip {	
+  position: absolute;
+  text-align: left;
+  padding: 12px;
+  font-size: 16px;
+  font-family: 'Cormorant Garamond', serif;
+  background: rgba(250, 250, 250, 0.75);
+  border-radius: 3px;
+  pointer-events: none;
+}
+rect {
+  fill: none;
+  pointer-events: all;
+  z-index: -10;
+}
+circle {
+  fill: none;
+  stroke-width: 2.5px;
+}
+
+.connection{
+  opacity:0.8;
+}
+.shadow{
+  fill:black;
+  opacity:0.8;
+}
+.shadowL1{
+  fill: rgb(30,30,30);
+  opacity:0.9;
+}
+.shadowL2{
+  fill:rgb(30,30,30);
+  opacity:0.9;
+}
+.shadowL3{
+  fill:rgb(30,30,30);
+  opacity:0.7;
+}
+.shadowL4{
+  fill:rgb(30,30,30);
+  opacity:0.7;
+}
+.shadowL5{
+  fill:rgb(30,30,30);
+  opacity:0.5;
+}
+.shadowL6{
+  fill:rgb(30,30,30);
+  opacity:0.5;
+}
+.imgline{
+  stroke:red;
+  stroke-width: 7.8px;
+  z-index: 30;
+}
+.heatline{
+  stroke:white;
+  stroke-width: 2.8px;
+  z-index: 30;
+}
+  </style>
+  <body>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script  src="./js/ExitFlow.js"> </script>
+    <script>
+      d3.select("#brand1")
+        .on("mouseover",function(d){
+            console.log(this)
+            d3.select(this).style("color","white")
+        })
+        .on("mouseout",function(d){
+            d3.select(this).style("color","grey")
+        })
+        d3.select("#brand2")
+        .on("mouseover",function(d){
+            console.log(this)
+            d3.select(this).style("color","white")
+        })
+        .on("mouseout",function(d){
+            d3.select(this).style("color","grey")
+        })
+        d3.select("#brand3")
+        .on("mouseover",function(d){
+            console.log(this)
+            d3.select(this).style("color","white")
+        })
+        .on("mouseout",function(d){
+            d3.select(this).style("color","grey")
+        })
+  </script>
+   
+  </body>
+</DOCTYPE>
