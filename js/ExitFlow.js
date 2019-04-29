@@ -507,7 +507,7 @@ function mouseoverimg(d){
                     .attr('y',468)
                     .attr('width', 400)
                     .attr('height', 300)
-                    .attr("xlink:href", "/data/pic/"+d.img)
+                    .attr("xlink:href", "https://wmjpillow.github.io/SHMetroVIS/data/pic/"+d.img)
     geocanvas.append("text")
              .attr('id',"appendtext")
              .attr('x',25)

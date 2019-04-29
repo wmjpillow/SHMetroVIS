@@ -469,7 +469,7 @@ function  Drawstationimg(stationline){
                     .attr('height', 45)
                     .attr("row",function(d){return ImageRank(d.INDEX);})
                     .attr("rowNo",function(d){return (d.INDEX%41);})
-                    .attr("xlink:href", function(d){return ("/data/pic/"+d.img);})
+                    .attr("xlink:href", function(d){return ("https://wmjpillow.github.io/SHMetroVIS/data/pic/"+d.img);})
                     .style("opacity",0.8)    
                     .on("mouseover",function(d){
                       imgRow=(d3.select(this).attr('row'));
@@ -481,7 +481,7 @@ function  Drawstationimg(stationline){
                           .attr('y', ImageRank(d.INDEX)*70)
                           .attr('width', 100)
                     .attr('height', 45)
-                    .attr("xlink:href","/data/pic/"+d.img)
+                    .attr("xlink:href","https://wmjpillow.github.io/SHMetroVIS/data/pic/"+d.img)
                     .style("pointer-events", "none");
                  
                     imgshadow1=imgsvg.append("rect")
@@ -548,7 +548,7 @@ function  Drawstationimg(stationline){
                           .attr('y', 620)
                           .attr('width', 600)
                     .attr('height', 270)
-                    .attr("xlink:href","/data/pic/"+d.img)
+                    .attr("xlink:href","https://wmjpillow.github.io/SHMetroVIS/data/pic/"+d.img)
                     .style("pointer-events", "none");
 
                 var  imgbigtext = imgsvg.append("svg:text")
@@ -924,7 +924,7 @@ function mouseoverimg(d){
                     .attr('y',468)
                     .attr('width', 400)
                     .attr('height', 300)
-                    .attr("xlink:href", "/data/pic/"+d.img)
+                    .attr("xlink:href", "https://wmjpillow.github.io/SHMetroVIS/data/pic/"+d.img)
     geocanvas.append("text")
              .attr('id',"appendtext")
              .attr('x',25)
